@@ -6477,7 +6477,7 @@ void EditorSpatialGizmoPlugin::create_icon_material(const String &p_name, const 
 		icon->set_texture(SpatialMaterial::TEXTURE_ALBEDO, p_texture);
 		icon->set_flag(SpatialMaterial::FLAG_FIXED_SIZE, true);
 		icon->set_billboard_mode(SpatialMaterial::BILLBOARD_ENABLED);
-		icon->set_render_priority(SpatialMaterial::RENDER_PRIORITY_MIN);
+		icon->set_render_priority(SpatialMaterial::RENDER_PRIORITY_MAX);
 
 		if (p_on_top && selected) {
 			icon->set_on_top_of_alpha();
