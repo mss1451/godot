@@ -468,8 +468,7 @@ void AudioStreamPlayer3D::_notification(int p_what) {
 					Vector3 listenertopos = global_pos - listener_node->get_global_transform().origin;
 					float c = listenertopos.normalized().dot(get_global_transform().basis.get_axis(2).normalized()); //it's z negative
 					float angle = Math::rad2deg(Math::acos(c));
-					if (angle > emission_angle)
-						db_att -= -emission_angle_filter_attenuation_db;
+					db_att -= -emission_angle_filter_attenuation_db * fmin(1.0, pow(angle / emission_angle,2.0));
 				}
 
 				output.filter_gain = Math::db2linear(db_att);
