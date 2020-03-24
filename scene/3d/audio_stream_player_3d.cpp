@@ -475,7 +475,7 @@ void AudioStreamPlayer3D::_notification(int p_what) {
 
 				//TODO: The lower the second parameter (tightness) the more the sound will "enclose" the listener (more undirected / playing from
 				//      speakers not facing the source) - this could be made distance dependent.
-				_calc_output_vol(local_pos.normalized(), 4.0, output);
+				_calc_output_vol(local_pos.normalized(), tightness, output);
 
 				unsigned int cc = AudioServer::get_singleton()->get_channel_count();
 				for (unsigned int k = 0; k < cc; k++) {
@@ -696,6 +696,13 @@ void AudioStreamPlayer3D::set_pitch_scale(float p_pitch_scale) {
 }
 float AudioStreamPlayer3D::get_pitch_scale() const {
 	return pitch_scale;
+}
+
+void AudioStreamPlayer3D::set_tightness(float p_thightness) {
+       tightness = p_thightness;
+}
+float AudioStreamPlayer3D::get_tightness() const {
+       return tightness;
 }
 
 void AudioStreamPlayer3D::play(float p_from_pos) {
@@ -947,6 +954,9 @@ void AudioStreamPlayer3D::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_pitch_scale", "pitch_scale"), &AudioStreamPlayer3D::set_pitch_scale);
 	ClassDB::bind_method(D_METHOD("get_pitch_scale"), &AudioStreamPlayer3D::get_pitch_scale);
+	
+	ClassDB::bind_method(D_METHOD("set_tightness", "tightness"), &AudioStreamPlayer3D::set_tightness);
+	ClassDB::bind_method(D_METHOD("get_tightness"), &AudioStreamPlayer3D::get_tightness);
 
 	ClassDB::bind_method(D_METHOD("play", "from_position"), &AudioStreamPlayer3D::play, DEFVAL(0.0));
 	ClassDB::bind_method(D_METHOD("seek", "to_position"), &AudioStreamPlayer3D::seek);
@@ -1007,6 +1017,7 @@ void AudioStreamPlayer3D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "unit_size", PROPERTY_HINT_RANGE, "0.1,100,0.1"), "set_unit_size", "get_unit_size");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "max_db", PROPERTY_HINT_RANGE, "-24,6"), "set_max_db", "get_max_db");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "pitch_scale", PROPERTY_HINT_RANGE, "0.01,4,0.01,or_greater"), "set_pitch_scale", "get_pitch_scale");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "tightness", PROPERTY_HINT_RANGE, "0.0,4,0.1"), "set_tightness", "get_tightness");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "playing", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "_set_playing", "is_playing");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autoplay"), "set_autoplay", "is_autoplay_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "stream_paused", PROPERTY_HINT_NONE, ""), "set_stream_paused", "get_stream_paused");
@@ -1046,6 +1057,7 @@ AudioStreamPlayer3D::AudioStreamPlayer3D() {
 	attenuation_model = ATTENUATION_INVERSE_DISTANCE;
 	max_db = 3;
 	pitch_scale = 1.0;
+	tightness = 1.0;
 	autoplay = false;
 	setseek = -1;
 	active = false;
