@@ -1119,7 +1119,14 @@ bool KinematicBody::move_and_collide(const Vector3 &p_motion, bool p_infinite_in
 		r_collision.normal = result.collision_normal;
 		r_collision.collider = result.collider_id;
 		r_collision.collider_rid = result.collider;
-		r_collision.travel = result.motion;
+		if (p_motion == Vector3()) {
+			result.motion = Vector3();
+			result.remainder = Vector3();
+		} else {
+			result.motion = result.motion.project(p_motion);
+			result.remainder = result.remainder.project(p_motion);
+		}
+		r_collision.travel = result.motion.project(p_motion);
 		r_collision.remainder = result.remainder;
 		r_collision.local_shape = result.collision_local_shape;
 	}
@@ -1256,11 +1263,6 @@ Vector3 KinematicBody::move_and_slide_with_snap(const Vector3 &p_linear_velocity
 				floor_normal = col.normal;
 				on_floor_body = col.collider_rid;
 				floor_velocity = col.collider_vel;
-				if (p_stop_on_slope) {
-					// move and collide may stray the object a bit because of pre un-stucking,
-					// so only ensure that motion happens on floor direction in this case.
-					col.travel = col.travel.project(p_up_direction);
-				}
 			} else {
 				apply = false; //snapped with floor direction, but did not snap to a floor, do not snap.
 			}
